@@ -4,7 +4,7 @@ ARG BUILD_VERSION=14-alpine
 FROM node:${BUILD_VERSION}
 
 # update npm version
-RUN npm install -g npm@7
+RUN npm install -g npm@7.24.1
 
 # create work context container
 RUN mkdir -p /var/www/api
@@ -20,5 +20,3 @@ RUN npm run build
 
 # run server
 CMD npm run start:prod
-
-EXPOSE 5432
