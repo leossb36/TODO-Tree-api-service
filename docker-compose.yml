@@ -1,0 +1,57 @@
+version: '3.5'
+
+services:
+  api-service:
+    build: .
+    hostname: api-service
+    command: npm run start:prod
+    volumes: 
+      - .:/var/www/api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+    networks:
+      - backend
+    depends_on:
+      - mysql
+
+  api-debug:
+    build: .
+    hostname: api-service
+    command: npm run start:debug
+    volumes: 
+      - .:/var/www/api
+    env_file:
+      - .env
+    ports:
+      - "8000:8000"
+      - "8080:8080"
+    networks:
+      - backend
+    depends_on:
+      - mysql
+
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: always
+    env_file:
+      - .env
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+    ports:
+      - ${MYSQL_LOCAL_PORT}:${MYSQL_DOCKER_PORT}
+    volumes:
+      - db-config:/etc/mysql
+      - db-data:/var/lib/mysql
+
+networks:
+  backend:
+    name: todo-api-service
+    driver: bridge
+
+volumes: 
+  db-config:
+  db-data:
