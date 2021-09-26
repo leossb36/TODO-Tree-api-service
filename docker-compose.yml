@@ -14,7 +14,7 @@ services:
     networks:
       - backend
     depends_on:
-      - mysql
+      - database
 
   api-debug:
     build: .
@@ -30,15 +30,16 @@ services:
     networks:
       - backend
     depends_on:
-      - mysql
+      - database
 
-  mysql:
+  database:
     container_name: mysql
     image: mysql
     restart: always
     env_file:
       - .env
     environment:
+      MYSQL_USER: $MYSQL_ROOT_NAME
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       MYSQL_DATABASE: $MYSQL_DATABASE
     ports:
@@ -46,6 +47,8 @@ services:
     volumes:
       - db-config:/etc/mysql
       - db-data:/var/lib/mysql
+    networks:
+      - backend
 
 networks:
   backend:
