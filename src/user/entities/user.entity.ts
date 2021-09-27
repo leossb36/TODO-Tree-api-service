@@ -1,5 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { BeforeInsert, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  BeforeInsert,
+  Column,
+  CreateDateColumn,
+  Entity,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn,
+} from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Entity('User')
 export class User {
@@ -8,23 +16,30 @@ export class User {
   id: number;
 
   @ApiProperty()
-  @Column({ length: 200 })
+  @Column()
   name: string;
 
   @ApiProperty()
-  @Column({ length: 200 })
+  @Column()
   email: string;
 
   @ApiProperty()
-  @Column({ length: 200 })
+  @Column()
   password: string;
 
   @ApiProperty()
   @Column({ type: Boolean })
   isAdmin: boolean;
 
+  @CreateDateColumn()
+  createdAt: Date;
+
+  @UpdateDateColumn()
+  updatedAt: Date;
+
   @BeforeInsert()
-  emailTolowerCase() {
-    this.email = this.email.toLowerCase();
+  async setPassword(password: string) {
+    const salt = await bcrypt.genSalt();
+    this.password = await bcrypt.hash(password || this.password, salt);
   }
 }

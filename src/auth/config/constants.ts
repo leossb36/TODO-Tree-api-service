@@ -5,5 +5,3 @@ const configService = new ConfigService();
 export const jwtConstants = {
   secret: configService.get('auth').secretKey,
 };
-
-console.log(jwtConstants);

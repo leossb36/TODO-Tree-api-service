@@ -12,10 +12,7 @@ async function bootstrap() {
     .setTitle('TODO Tree')
     .setDescription('TODO Tree API Service')
     .setVersion('1.0')
-    .addBearerAuth(
-      { type: 'http', scheme: 'bearer', bearerFormat: 'JWT' },
-      'access-token',
-    )
+    .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);

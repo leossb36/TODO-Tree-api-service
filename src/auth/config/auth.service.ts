@@ -1,7 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { UserService } from '../../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { from, Observable } from 'rxjs';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -11,13 +10,14 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async validateUser(userEmail: string, userPassword: string): Promise<any> {
-    const user = await this.usersService.getByEmail(userEmail);
-    if (user && user.password === userPassword) {
+  async validateUser(email: string, password: string): Promise<any> {
+    const user = await this.usersService.getByEmail(email);
+    if (user && this.comparePassword(password, user.password)) {
       const { id, name, email } = user;
       return { id, name, email };
+    } else {
+      throw new HttpException('Invalid Login params!', HttpStatus.UNAUTHORIZED);
     }
-    return null;
   }
 
   async login(user: any) {
@@ -27,14 +27,10 @@ export class AuthService {
     };
   }
 
-  async hashPassword(password: string): Promise<Observable<string>> {
-    return from<string>(await bcrypt.hash(password, 12));
-  }
-
   async comparePassword(
     password: string,
     hashPassword: string,
-  ): Promise<Observable<any>> {
-    return from<any>(await bcrypt.compare(password, hashPassword));
+  ): Promise<boolean> {
+    return await bcrypt.compare(password, hashPassword);
   }
 }
