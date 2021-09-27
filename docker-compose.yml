@@ -39,11 +39,10 @@ services:
     env_file:
       - .env
     environment:
-      MYSQL_USER: $MYSQL_ROOT_NAME
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       MYSQL_DATABASE: $MYSQL_DATABASE
     ports:
-      - ${MYSQL_LOCAL_PORT}:${MYSQL_DOCKER_PORT}
+      - "3306:3306"
     volumes:
       - db-config:/etc/mysql
       - db-data:/var/lib/mysql
